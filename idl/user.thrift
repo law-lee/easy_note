@@ -5,7 +5,7 @@ enum ErrCode {
     ServiceErrCode = 10001
     ParamErrCode = 10002
     UserAlreadyExistErrCode = 10003
-    AuthorizationFailErrCode = 10004
+    AuthorizationFailedErrCode = 10004
 }
 
 struct BaseResp {

@@ -12,11 +12,11 @@ import (
 type ErrCode int64
 
 const (
-	ErrCode_SuccessCode              ErrCode = 0
-	ErrCode_ServiceErrCode           ErrCode = 10001
-	ErrCode_ParamErrCode             ErrCode = 10002
-	ErrCode_UserAlreadyExistErrCode  ErrCode = 10003
-	ErrCode_AuthorizationFailErrCode ErrCode = 10004
+	ErrCode_SuccessCode                ErrCode = 0
+	ErrCode_ServiceErrCode             ErrCode = 10001
+	ErrCode_ParamErrCode               ErrCode = 10002
+	ErrCode_UserAlreadyExistErrCode    ErrCode = 10003
+	ErrCode_AuthorizationFailedErrCode ErrCode = 10004
 )
 
 func (p ErrCode) String() string {
@@ -29,8 +29,8 @@ func (p ErrCode) String() string {
 		return "ParamErrCode"
 	case ErrCode_UserAlreadyExistErrCode:
 		return "UserAlreadyExistErrCode"
-	case ErrCode_AuthorizationFailErrCode:
-		return "AuthorizationFailErrCode"
+	case ErrCode_AuthorizationFailedErrCode:
+		return "AuthorizationFailedErrCode"
 	}
 	return "<UNSET>"
 }
@@ -45,8 +45,8 @@ func ErrCodeFromString(s string) (ErrCode, error) {
 		return ErrCode_ParamErrCode, nil
 	case "UserAlreadyExistErrCode":
 		return ErrCode_UserAlreadyExistErrCode, nil
-	case "AuthorizationFailErrCode":
-		return ErrCode_AuthorizationFailErrCode, nil
+	case "AuthorizationFailedErrCode":
+		return ErrCode_AuthorizationFailedErrCode, nil
 	}
 	return ErrCode(0), fmt.Errorf("not a valid ErrCode string")
 }
