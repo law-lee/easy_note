@@ -54,6 +54,20 @@ func (s *UserServiceImpl) MGetUser(ctx context.Context, req *demouser.MGetUserRe
 
 // CheckUser implements the UserServiceImpl interface.
 func (s *UserServiceImpl) CheckUser(ctx context.Context, req *demouser.CheckUserRequest) (resp *demouser.CheckUserResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(demouser.CheckUserResponse)
+
+	if err = req.IsValid(); err != nil {
+		resp.BaseResp = pack.BuildBaseResp(errno.ParamErr)
+		return resp, nil
+	}
+
+	uid, err := service.NewCheckUserService(ctx).CheckUser(req)
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
+	}
+
+	resp.UserId = uid
+	resp.BaseResp = pack.BuildBaseResp(errno.Success)
+	return resp, nil
 }
