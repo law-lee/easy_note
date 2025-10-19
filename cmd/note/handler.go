@@ -98,5 +98,20 @@ func (s *NoteServiceImpl) QueryNote(ctx context.Context, req *demonote.QueryNote
 // MGetNote implements the NoteServiceImpl interface.
 func (s *NoteServiceImpl) MGetNote(ctx context.Context, req *demonote.MGetNoteRequest) (resp *demonote.MGetNoteResponse, err error) {
 	// TODO: Your code here...
+	resp = new(demonote.MGetNoteResponse)
+
+	if err = req.IsValid(); err != nil {
+		resp.BaseResp = pack.BuildBaseResp(errno.ParamErr)
+		return resp, nil
+	}
+
+	notes, err := service.NewMGetNoteService(ctx).MGetNote(req)
+	if err != nil {
+		resp.BaseResp = pack.BuildBaseResp(err)
+		return resp, nil
+	}
+
+	resp.BaseResp = pack.BuildBaseResp(errno.Success)
+	resp.Notes = notes
 	return
 }
