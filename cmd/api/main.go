@@ -3,11 +3,45 @@
 package main
 
 import (
+	"context"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	hertzlogrus "github.com/hertz-contrib/obs-opentelemetry/logging/logrus"
+	"github.com/hertz-contrib/obs-opentelemetry/provider"
+	"github.com/hertz-contrib/obs-opentelemetry/tracing"
+	"github.com/hertz-contrib/pprof"
+	"github.com/law-lee/easy_note/cmd/api/mw"
+	"github.com/law-lee/easy_note/cmd/note/rpc"
+	"github.com/law-lee/easy_note/pkg/consts"
 )
 
+func Init() {
+	rpc.Init()
+	mw.InitJWT()
+	// hlog init
+	hlog.SetLogger(hertzlogrus.NewLogger())
+	hlog.SetLevel(hlog.LevelInfo)
+}
+
 func main() {
-	h := server.Default()
+	p := provider.NewOpenTelemetryProvider(
+		provider.WithServiceName(consts.ApiServiceName),
+		provider.WithExportEndpoint(consts.ExportEndpoint),
+		provider.WithInsecure(),
+	)
+	defer p.Shutdown(context.Background())
+	Init()
+	tracer, cfg := tracing.NewServerTracer()
+	h := server.New(
+		server.WithHostPorts(":8080"),
+		server.WithHandleMethodNotAllowed(true), // coordinate with noMethod
+		tracer,
+	)
+	pprof.Register(h)
+
+	// use otel mw
+	h.Use(tracing.ServerMiddleware(cfg))
 
 	register(h)
 	h.Spin()
